@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul ETS — Software Engineering</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #1b2d45;
+    --teal: #1a8a7a;
+    --teal-light: #25b5a0;
+    --gold: #e8b84b;
+    --cream: #f4f0e6;
+    --cream-dark: #e8e2d4;
+    --text: #1a1a2e;
+    --muted: #5a6a7a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--cream);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  /* HEADER */
+  .hero {
+    background: var(--navy);
+    color: white;
+    padding: 48px 40px 40px;
+    border-bottom: 4px solid var(--gold);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    border: 40px solid rgba(232,184,75,0.07);
+    border-radius: 50%;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .hero p { color: rgba(255,255,255,0.65); font-size: 14px; }
+
+  /* TABS */
+  .tab-bar {
+    background: var(--navy-mid);
+    display: flex;
+    gap: 0;
+    padding: 0 40px;
+    border-bottom: 3px solid var(--teal);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 14px 22px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -3px;
+    transition: all 0.2s;
+  }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-btn:hover:not(.active) { color: white; }
+
+  /* CONTENT */
+  .tab-pane { display: none; padding: 40px; max-width: 960px; margin: 0 auto; }
+  .tab-pane.active { display: block; }
+
+  /* RANGKUMAN */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--navy);
+    border-left: 4px solid var(--gold);
+    padding-left: 16px;
+    margin: 36px 0 16px;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  .card {
+    background: white;
+    border-radius: 4px;
+    border: 1px solid var(--cream-dark);
+    border-left: 4px solid var(--teal);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--teal);
+    margin-bottom: 10px;
+  }
+  .card ul { padding-left: 20px; }
+  .card ul li { margin-bottom: 5px; }
+
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .badge {
+    background: var(--navy);
+    color: white;
+    font-size: 12px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .badge.gold { background: var(--gold); color: var(--navy); }
+  .badge.teal { background: var(--teal); }
+
+  .cmmi-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 8px 16px;
+    align-items: start;
+    margin: 8px 0;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+  .cmmi-level {
+    background: var(--navy);
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 13px;
+    text-align: center;
+    padding: 4px 8px;
+    border-radius: 3px;
+  }
+
+  .characteristic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  @media(max-width: 600px) { .characteristic-grid { grid-template-columns: 1fr; } }
+
+  .char-item {
+    background: var(--cream);
+    border: 1px solid var(--cream-dark);
+    border-radius: 4px;
+    padding: 12px 14px;
+  }
+  .char-item strong { color: var(--teal); display: block; margin-bottom: 4px; }
+
+  /* PG SECTION */
+  .question-block {
+    background: white;
+    border: 1px solid var(--cream-dark);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .q-header {
+    background: var(--navy);
+    color: white;
+    padding: 10px 18px;
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .q-num {
+    background: var(--gold);
+    color: var(--navy);
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .q-body { padding: 16px 18px; }
+  .q-text { margin-bottom: 14px; font-size: 14.5px; }
+  .options { list-style: none; }
+  .options li {
+    padding: 7px 14px;
+    border-radius: 3px;
+    margin-bottom: 6px;
+    border: 1px solid var(--cream-dark);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .options li:hover { background: var(--cream); border-color: var(--teal); }
+  .options li .opt-label {
+    font-weight: 700;
+    color: var(--teal);
+    min-width: 16px;
+  }
+  .options li.correct { background: #e8f8f5; border-color: var(--teal); }
+  .options li.correct .opt-label { color: var(--teal); }
+  .options li.wrong { background: #fdf0f0; border-color: #e57373; }
+  .options li.wrong .opt-label { color: #e57373; }
+
+  .show-answer-btn {
+    margin-top: 10px;
+    background: none;
+    border: 1px solid var(--teal);
+    color: var(--teal);
+    padding: 5px 14px;
+    border-radius: 3px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+  }
+  .show-answer-btn:hover { background: var(--teal); color: white; }
+  .answer-reveal {
+    display: none;
+    background: #e8f8f5;
+    border-radius: 3px;
+    padding: 8px 14px;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--teal);
+    font-weight: 600;
+    border-left: 3px solid var(--teal);
+  }
+  .answer-reveal.visible { display: block; }
+
+  /* ESSAY SECTION */
+  .essay-block {
+    background: white;
+    border: 1px solid var(--cream-dark);
+    border-radius: 4px;
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .essay-header {
+    background: var(--navy-mid);
+    color: white;
+    padding: 10px 18px;
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .essay-num {
+    background: var(--teal);
+    color: white;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .essay-body { padding: 16px 18px; font-size: 14.5px; }
+  .essay-hint {
+    display: none;
+    background: #fff8e6;
+    border-left: 3px solid var(--gold);
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #7a5a10;
+    border-radius: 0 3px 3px 0;
+  }
+  .essay-hint.visible { display: block; }
+  .hint-btn {
+    margin-top: 10px;
+    background: none;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 5px 14px;
+    border-radius: 3px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+  }
+  .hint-btn:hover { background: var(--gold); color: var(--navy); }
+
+  .topic-tag {
+    background: var(--cream);
+    color: var(--muted);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  .score-bar {
+    background: white;
+    border: 1px solid var(--cream-dark);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .score-bar p { font-size: 13px; color: var(--muted); }
+  .score-display {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--teal);
+    min-width: 80px;
+    text-align: center;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--cream-dark);
+    margin: 32px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin-top: 10px;
+  }
+  th {
+    background: var(--navy);
+    color: white;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td { padding: 7px 12px; border-bottom: 1px solid var(--cream-dark); }
+  tr:nth-child(even) td { background: var(--cream); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">Polban · TI2034 Software Engineering</div>
+  <h1>Modul Persiapan ETS</h1>
+  <p>Rangkuman Materi + 30 Soal Pilihan Ganda + 30 Soal Esai &nbsp;|&nbsp; Berdasarkan IEEE 830, Pressman & Sommerville</p>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('rangkuman', this)">📚 Rangkuman</button>
+  <button class="tab-btn" onclick="showTab('pg', this)">✅ Pilihan Ganda (30)</button>
+  <button class="tab-btn" onclick="showTab('essay', this)">✍️ Esai (30)</button>
+</div>
+
+<!-- ======== RANGKUMAN ======== -->
+<div id="rangkuman" class="tab-pane active">
+
+  <div class="section-title">1. Konsep Dasar Rekayasa Perangkat Lunak</div>
+  <div class="card">
+    <h3>Definisi & Komponen</h3>
+    <ul>
+      <li><strong>Software</strong> = Program + Struktur Data + Dokumentasi</li>
+      <li><strong>Software Engineering (SE)</strong>: disiplin rekayasa yang berfokus pada pengembangan perangkat lunak berkualitas tinggi secara sistematis</li>
+      <li><strong>SE vs CS</strong>: CS fokus pada teori & algoritma; SE fokus pada proses & praktik pengembangan</li>
+      <li><strong>SE vs System Engineering</strong>: System Eng mencakup semua aspek sistem (hardware + software); SE fokus pada bagian software</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Karakteristik Good Software (MAUDE)</h3>
+    <div class="badge-row">
+      <span class="badge gold">Maintainability</span>
+      <span class="badge teal">Acceptability</span>
+      <span class="badge">Usability</span>
+      <span class="badge gold">Dependability</span>
+      <span class="badge teal">Efficiency</span>
+    </div>
+  </div>
+
+  <div class="section-title">2. Software Process Framework & Umbrella Activities</div>
+  <div class="card">
+    <h3>Common Process Framework (5 Aktivitas)</h3>
+    <table>
+      <tr><th>Aktivitas</th><th>Deskripsi</th></tr>
+      <tr><td>Communication</td><td>Kolaborasi dengan customer untuk mengumpulkan requirements</td></tr>
+      <tr><td>Planning</td><td>Menetapkan rencana kerja, risiko, jadwal, dan sumber daya</td></tr>
+      <tr><td>Modeling</td><td>Membuat model untuk memahami requirements dan desain</td></tr>
+      <tr><td>Construction</td><td>Penulisan kode dan pengujian (coding & testing)</td></tr>
+      <tr><td>Deployment</td><td>Penyerahan software untuk evaluasi dan feedback customer</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>SE Umbrella Activities (selalu ada di semua fase)</h3>
+    <ul>
+      <li>Software project tracking and control</li>
+      <li>Risk management</li>
+      <li>Software quality assurance (SQA)</li>
+      <li>Formal technical reviews</li>
+      <li>Measurement</li>
+      <li>Software configuration management</li>
+      <li>Reusability management</li>
+      <li>Work product preparation and production</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>SEI – CMMI (6 Level)</h3>
+    <div class="cmmi-row"><div class="cmmi-level">L0</div><div><strong>Incomplete</strong> — Proses tidak dilaksanakan atau tidak mencapai tujuan</div></div>
+    <div class="cmmi-row"><div class="cmmi-level">L1</div><div><strong>Performed</strong> — Task sedang dilaksanakan untuk menghasilkan work products</div></div>
+    <div class="cmmi-row"><div class="cmmi-level">L2</div><div><strong>Managed</strong> — Sumber daya cukup, stakeholder terlibat, tugas dipantau dan dievaluasi</div></div>
+    <div class="cmmi-row"><div class="cmmi-level">L3</div><div><strong>Defined</strong> — Proses terdokumentasi, terstandarisasi, dan terintegrasi ke organisasi</div></div>
+    <div class="cmmi-row"><div class="cmmi-level">L4</div><div><strong>Quantitatively Managed</strong> — Proses dipahami dan dikontrol secara kuantitatif</div></div>
+    <div class="cmmi-row" style="border:none"><div class="cmmi-level">L5</div><div><strong>Optimizing</strong> — Perbaikan proses secara berkelanjutan berdasarkan feedback kuantitatif</div></div>
+  </div>
+
+  <div class="section-title">3. Model SDLC (Prescriptive & Evolutionary)</div>
+  <div class="card">
+    <h3>Waterfall Model</h3>
+    <ul>
+      <li><strong>Alur:</strong> Requirements → Design → Implementation → Testing → Maintenance</li>
+      <li><strong>Kapan digunakan:</strong> Requirements sudah jelas dan stabil, proyek besar multi-lokasi</li>
+      <li><strong>Kelemahan:</strong> Tidak fleksibel terhadap perubahan requirements</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Incremental Model</h3>
+    <ul>
+      <li>Pengiriman software dilakukan dalam increment (bagian kecil tapi fungsional)</li>
+      <li>Setiap increment melewati: Analysis → Design → Code → Test</li>
+      <li><strong>Kelemahan:</strong> Sulit mendefinisikan increment yang tepat; dapat terjadi degradasi arsitektur</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>RAD (Rapid Application Development)</h3>
+    <ul>
+      <li>Memanfaatkan reusable components secara intensif</li>
+      <li>Siklus pengembangan sangat pendek: <strong>60–90 hari</strong></li>
+      <li>Alur: Business Modeling → Data Modeling → Process Modeling → App Generation → Testing &amp; Turnover</li>
+      <li><strong>Kelemahan:</strong> Membutuhkan banyak developer; tidak cocok untuk sistem yang tidak dapat dimodulasi</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Prototyping Model</h3>
+    <ul>
+      <li>Iterasi: Listen → Build/Revise Mock-up → Customer Test-Drives</li>
+      <li><strong>Kapan digunakan:</strong> Customer memiliki kebutuhan umum tapi tidak tahu detail</li>
+      <li><strong>Kelemahan:</strong> Customer mungkin menganggap prototype sudah final; kualitas mungkin rendah</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Spiral Model</h3>
+    <ul>
+      <li>Menggabungkan iterasi prototyping dengan aspek terstruktur linear sequential</li>
+      <li>4 Quadrant: Customer Communication → Planning → Risk Analysis → Engineering → Construction &amp; Release → Customer Evaluation</li>
+      <li>Menekankan <strong>analisis risiko</strong> di setiap iterasi</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Concurrent Development Model</h3>
+    <ul>
+      <li>Mirip Spiral; sering digunakan untuk aplikasi client/server</li>
+      <li>Setiap aktivitas berada dalam salah satu state: Under Development, Baselined, Under Revision, Done, dll.</li>
+    </ul>
+  </div>
+
+  <div class="section-title">4. CBSE, Unified Process & Agile</div>
+  <div class="card">
+    <h3>CBSE (Component-Based Software Engineering)</h3>
+    <ul>
+      <li>Berdasarkan systematic reuse dari komponen yang ada atau COTS (Commercial-off-the-shelf)</li>
+      <li><strong>Tahapan:</strong> Component Analysis → Requirements Modification → System Design with Reuse → Development and Integration</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>The Unified Process (5 Fase)</h3>
+    <table>
+      <tr><th>Fase</th><th>Fokus</th><th>Work Products Kunci</th></tr>
+      <tr><td>Inception</td><td>Komunikasi &amp; perencanaan awal</td><td>Vision doc, use-case awal, risk assessment</td></tr>
+      <tr><td>Elaboration</td><td>Komunikasi &amp; pemodelan</td><td>Use-case model, arsitektur SW, functional/non-functional req</td></tr>
+      <tr><td>Construction</td><td>Pengembangan</td><td>Design model, software components, test cases</td></tr>
+      <tr><td>Transition</td><td>Pengiriman ke customer</td><td>Delivered increment, beta test reports, user feedback</td></tr>
+      <tr><td>Production</td><td>Monitoring &amp; support</td><td>Laporan monitoring</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Agile Manifesto (4 Nilai Utama)</h3>
+    <ul>
+      <li>Individuals &amp; interactions <em>atas</em> processes &amp; tools</li>
+      <li>Working software <em>atas</em> comprehensive documentation</li>
+      <li>Customer collaboration <em>atas</em> contract negotiation</li>
+      <li>Responding to change <em>atas</em> following a plan</li>
+    </ul>
+    <div style="margin-top:10px; font-size:13px; color: var(--muted)">Agile process models: XP, ASD, DSDM, <strong>Scrum</strong>, Crystal, FDD, AM</div>
+  </div>
+
+  <div class="section-title">5. Requirement Engineering</div>
+  <div class="card">
+    <h3>Jenis Requirements</h3>
+    <ul>
+      <li><strong>Functional Requirements:</strong> apa yang sistem HARUS LAKUKAN (fungsi, input, output, perilaku). Contoh: "Sistem harus dapat mencari produk berdasarkan nama."</li>
+      <li><strong>Non-functional Requirements:</strong> kualitas atau atribut sistem. Contoh: Performance, Security, Reliability, Usability, Portability, Maintainability</li>
+    </ul>
+  </div>
+
+  <div class="section-title">6. IEEE Std 830-1998 — Good SRS</div>
+  <div class="card">
+    <h3>8 Karakteristik Good SRS</h3>
+    <div class="characteristic-grid">
+      <div class="char-item"><strong>1. Correct</strong>Setiap requirement benar-benar mencerminkan kebutuhan yang sebenarnya</div>
+      <div class="char-item"><strong>2. Unambiguous</strong>Setiap requirement hanya memiliki SATU interpretasi. Hindari kata ambigu seperti "cepat", "baik"</div>
+      <div class="char-item"><strong>3. Complete</strong>Mencakup semua requirements (fungsi, performa, batasan, atribut, antarmuka eksternal). Tidak ada TBD yang tidak dijelaskan.</div>
+      <div class="char-item"><strong>4. Consistent</strong>Tidak ada requirements yang saling bertentangan (konflik karakteristik, logis/temporal, atau terminologi)</div>
+      <div class="char-item"><strong>5. Ranked</strong>Setiap requirement diberi prioritas: Essential / Conditional / Optional</div>
+      <div class="char-item"><strong>6. Verifiable</strong>Ada cara yang hemat biaya untuk membuktikan bahwa software memenuhi requirement. Contoh benar: "Respons dalam &lt; 2 detik 95% waktu"</div>
+      <div class="char-item"><strong>7. Modifiable</strong>Struktur dokumen memungkinkan perubahan mudah, lengkap, dan konsisten. Gunakan ToC, index, cross-reference. Hindari redundansi.</div>
+      <div class="char-item"><strong>8. Traceable</strong>Asal-usul setiap requirement jelas (backward) dan setiap requirement memiliki ID unik untuk dilacak ke desain/kode (forward)</div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Struktur Dokumen SRS IEEE 830</h3>
+    <table>
+      <tr><th>Bagian</th><th>Isi Utama</th></tr>
+      <tr><td><strong>Section 1 — Introduction</strong></td><td>Purpose, Scope, Definitions/Acronyms/Abbreviations, References, Overview</td></tr>
+      <tr><td><strong>Section 2 — Overall Description</strong></td><td>Product Perspective, Product Functions, User Characteristics, Constraints, Assumptions &amp; Dependencies, Apportioning of Requirements</td></tr>
+      <tr><td><strong>Section 3 — Specific Requirements</strong></td><td>External Interfaces, Functions (shall statements), Performance, Logical DB, Design Constraints, Software System Attributes (Reliability, Availability, Security, Maintainability, Portability)</td></tr>
+    </table>
+    <div style="margin-top:12px; font-size:13px; color:var(--muted)">
+      💡 <strong>Penting:</strong> Section 2 memberikan <em>latar belakang umum</em> tanpa menyebutkan requirements spesifik. Section 3 adalah bagian <em>paling inti</em> yang memuat semua requirements detail untuk developer dan tester.
+    </div>
+  </div>
+  <div class="card">
+    <h3>Manfaat SRS yang Baik</h3>
+    <ul>
+      <li>Dasar kesepakatan antara customer dan supplier</li>
+      <li>Mengurangi effort pengembangan (menemukan masalah lebih awal)</li>
+      <li>Dasar estimasi biaya dan jadwal</li>
+      <li>Baseline untuk validasi dan verifikasi</li>
+      <li>Memudahkan transfer software ke pengguna/platform baru</li>
+      <li>Dasar untuk enhancement di masa depan</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ======== PILIHAN GANDA ======== -->
+<div id="pg" class="tab-pane">
+
+  <div class="score-bar">
+    <div class="score-display" id="pg-score">0/30</div>
+    <div>
+      <p><strong>Latihan Interaktif</strong></p>
+      <p>Klik opsi untuk memilih jawaban, lalu klik "Lihat Jawaban" untuk konfirmasi.</p>
+    </div>
+  </div>
+
+  <script>
+    let pgAnswered = {};
+    function selectOption(qid, chosen, correct) {
+      if (pgAnswered[qid]) return;
+      pgAnswered[qid] = true;
+      const opts = document.querySelectorAll(`[data-qid="${qid}"]`);
+      opts.forEach(o => {
+        if (o.dataset.opt === correct) o.classList.add('correct');
+        else if (o.dataset.opt === chosen) o.classList.add('wrong');
+      });
+      updateScore();
+    }
+    function updateScore() {
+      const total = Object.keys(pgAnswered).length;
+      document.getElementById('pg-score').textContent = total + '/30';
+    }
+    function toggleAnswer(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('visible');
+    }
+    function toggleHint(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('visible');
+    }
+  </script>
+
+  <!-- Q1 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">1</div> Manakah yang BUKAN termasuk dalam komponen perangkat lunak?<span class="topic-tag">Konsep Dasar</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q1','A','C')" data-qid="q1" data-opt="A"><span class="opt-label">A.</span> Program</li>
+        <li onclick="selectOption('q1','B','C')" data-qid="q1" data-opt="B"><span class="opt-label">B.</span> Dokumentasi</li>
+        <li onclick="selectOption('q1','C','C')" data-qid="q1" data-opt="C"><span class="opt-label">C.</span> Hardware</li>
+        <li onclick="selectOption('q1','D','C')" data-qid="q1" data-opt="D"><span class="opt-label">D.</span> Struktur Data</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans1')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans1">✔ Jawaban: C. Hardware — Software terdiri dari Program, Struktur Data, dan Dokumentasi. Hardware adalah perangkat keras, bukan bagian dari software.</div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">2</div> Pada CMMI, level mana yang menunjukkan bahwa proses tidak dilaksanakan atau tidak mencapai tujuannya?<span class="topic-tag">CMMI</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q2','A','B')" data-qid="q2" data-opt="A"><span class="opt-label">A.</span> Level 1: Performed</li>
+        <li onclick="selectOption('q2','B','B')" data-qid="q2" data-opt="B"><span class="opt-label">B.</span> Level 0: Incomplete</li>
+        <li onclick="selectOption('q2','C','B')" data-qid="q2" data-opt="C"><span class="opt-label">C.</span> Level 2: Managed</li>
+        <li onclick="selectOption('q2','D','B')" data-qid="q2" data-opt="D"><span class="opt-label">D.</span> Level 3: Defined</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans2')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans2">✔ Jawaban: B. Level 0: Incomplete — Level ini menunjukkan proses belum dilaksanakan sama sekali atau tidak mencapai semua tujuan yang ditetapkan.</div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">3</div> Manakah yang BUKAN termasuk dalam Common Process Framework?<span class="topic-tag">SW Process</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q3','A','B')" data-qid="q3" data-opt="A"><span class="opt-label">A.</span> Communication</li>
+        <li onclick="selectOption('q3','B','B')" data-qid="q3" data-opt="B"><span class="opt-label">B.</span> Testing</li>
+        <li onclick="selectOption('q3','C','B')" data-qid="q3" data-opt="C"><span class="opt-label">C.</span> Modeling</li>
+        <li onclick="selectOption('q3','D','B')" data-qid="q3" data-opt="D"><span class="opt-label">D.</span> Deployment</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans3')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans3">✔ Jawaban: B. Testing — Common Process Framework terdiri dari 5 aktivitas: Communication, Planning, Modeling, Construction, dan Deployment. Testing merupakan bagian dari Construction, bukan aktivitas tersendiri di framework.</div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">4</div> Model SDLC mana yang secara khusus menekankan analisis risiko di setiap iterasinya?<span class="topic-tag">SDLC</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q4','A','C')" data-qid="q4" data-opt="A"><span class="opt-label">A.</span> Waterfall</li>
+        <li onclick="selectOption('q4','B','C')" data-qid="q4" data-opt="B"><span class="opt-label">B.</span> Incremental</li>
+        <li onclick="selectOption('q4','C','C')" data-qid="q4" data-opt="C"><span class="opt-label">C.</span> Spiral</li>
+        <li onclick="selectOption('q4','D','C')" data-qid="q4" data-opt="D"><span class="opt-label">D.</span> RAD</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans4')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans4">✔ Jawaban: C. Spiral — Spiral Model menggabungkan iterasi prototyping dengan aspek terstruktur dari linear sequential model, dengan Risk Analysis sebagai salah satu dari 4 quadrant utamanya.</div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">5</div> RAD Model dirancang untuk menyelesaikan proyek dalam rentang waktu...<span class="topic-tag">SDLC</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q5','A','C')" data-qid="q5" data-opt="A"><span class="opt-label">A.</span> 30–60 hari</li>
+        <li onclick="selectOption('q5','B','C')" data-qid="q5" data-opt="B"><span class="opt-label">B.</span> 45–75 hari</li>
+        <li onclick="selectOption('q5','C','C')" data-qid="q5" data-opt="C"><span class="opt-label">C.</span> 60–90 hari</li>
+        <li onclick="selectOption('q5','D','C')" data-qid="q5" data-opt="D"><span class="opt-label">D.</span> 90–120 hari</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans5')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans5">✔ Jawaban: C. 60–90 hari — RAD memanfaatkan reusable components dan paralel tim untuk mencapai siklus pengembangan yang sangat pendek dalam 60–90 hari.</div>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">6</div> Manakah yang BUKAN termasuk dalam 8 karakteristik Good SRS menurut IEEE 830-1998?<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q6','A','C')" data-qid="q6" data-opt="A"><span class="opt-label">A.</span> Correct</li>
+        <li onclick="selectOption('q6','B','C')" data-qid="q6" data-opt="B"><span class="opt-label">B.</span> Traceable</li>
+        <li onclick="selectOption('q6','C','C')" data-qid="q6" data-opt="C"><span class="opt-label">C.</span> Feasible</li>
+        <li onclick="selectOption('q6','D','C')" data-qid="q6" data-opt="D"><span class="opt-label">D.</span> Modifiable</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans6')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans6">✔ Jawaban: C. Feasible — 8 karakteristik IEEE 830 adalah: Correct, Unambiguous, Complete, Consistent, Ranked, Verifiable, Modifiable, Traceable. "Feasible" tidak termasuk.</div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">7</div> "Backward traceability" pada SRS berarti...<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q7','A','A')" data-qid="q7" data-opt="A"><span class="opt-label">A.</span> Setiap requirement merujuk secara eksplisit ke sumber di dokumen sebelumnya</li>
+        <li onclick="selectOption('q7','B','A')" data-qid="q7" data-opt="B"><span class="opt-label">B.</span> Setiap requirement memiliki ID unik untuk dilacak ke desain dan kode</li>
+        <li onclick="selectOption('q7','C','A')" data-qid="q7" data-opt="C"><span class="opt-label">C.</span> Requirement dapat diubah sewaktu-waktu tanpa efek samping</li>
+        <li onclick="selectOption('q7','D','A')" data-qid="q7" data-opt="D"><span class="opt-label">D.</span> Requirement tidak boleh mengandung frase "TBD"</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans7')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans7">✔ Jawaban: A — Backward traceability = melacak ke dokumen SEBELUMNYA (asal requirement). Forward traceability = melacak ke dokumen SESUDAHNYA (desain, kode).</div>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">8</div> Pada struktur SRS IEEE 830, subseksi "User Characteristics" berada di...<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q8','A','B')" data-qid="q8" data-opt="A"><span class="opt-label">A.</span> Section 1 – Introduction</li>
+        <li onclick="selectOption('q8','B','B')" data-qid="q8" data-opt="B"><span class="opt-label">B.</span> Section 2 – Overall Description</li>
+        <li onclick="selectOption('q8','C','B')" data-qid="q8" data-opt="C"><span class="opt-label">C.</span> Section 3 – Specific Requirements</li>
+        <li onclick="selectOption('q8','D','B')" data-qid="q8" data-opt="D"><span class="opt-label">D.</span> Appendix</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans8')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans8">✔ Jawaban: B — Section 2 berisi: Product Perspective, Product Functions, User Characteristics, Constraints, Assumptions & Dependencies, Apportioning.</div>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">9</div> Unified Process memiliki berapa fase utama?<span class="topic-tag">Unified Process</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q9','A','C')" data-qid="q9" data-opt="A"><span class="opt-label">A.</span> 3 fase</li>
+        <li onclick="selectOption('q9','B','C')" data-qid="q9" data-opt="B"><span class="opt-label">B.</span> 4 fase</li>
+        <li onclick="selectOption('q9','C','C')" data-qid="q9" data-opt="C"><span class="opt-label">C.</span> 5 fase</li>
+        <li onclick="selectOption('q9','D','C')" data-qid="q9" data-opt="D"><span class="opt-label">D.</span> 6 fase</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans9')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans9">✔ Jawaban: C. 5 fase — Inception, Elaboration, Construction, Transition, Production.</div>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">10</div> Requirement "sistem harus memproses data dengan cepat" melanggar kriteria SRS mana?<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q10','A','C')" data-qid="q10" data-opt="A"><span class="opt-label">A.</span> Complete</li>
+        <li onclick="selectOption('q10','B','C')" data-qid="q10" data-opt="B"><span class="opt-label">B.</span> Correct</li>
+        <li onclick="selectOption('q10','C','C')" data-qid="q10" data-opt="C"><span class="opt-label">C.</span> Verifiable dan Unambiguous</li>
+        <li onclick="selectOption('q10','D','C')" data-qid="q10" data-opt="D"><span class="opt-label">D.</span> Traceable</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans10')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans10">✔ Jawaban: C — "Cepat" ambigu (Unambiguous) dan tidak bisa diuji/diverifikasi (Verifiable). Perbaikan: "Sistem harus memproses data dalam waktu &lt; 2 detik pada 95% transaksi."</div>
+    </div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">11</div> Model SDLC mana yang paling cocok digunakan saat customer memiliki kebutuhan umum namun tidak tahu detailnya?<span class="topic-tag">SDLC</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q11','A','C')" data-qid="q11" data-opt="A"><span class="opt-label">A.</span> Waterfall</li>
+        <li onclick="selectOption('q11','B','C')" data-qid="q11" data-opt="B"><span class="opt-label">B.</span> RAD</li>
+        <li onclick="selectOption('q11','C','C')" data-qid="q11" data-opt="C"><span class="opt-label">C.</span> Prototyping</li>
+        <li onclick="selectOption('q11','D','C')" data-qid="q11" data-opt="D"><span class="opt-label">D.</span> CBSE</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans11')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans11">✔ Jawaban: C. Prototyping — Prototyping digunakan ketika customer tahu kebutuhan umumnya ("legitimate need") tapi tidak bisa menentukan detail requirements.</div>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">12</div> Manakah yang termasuk dalam SE Umbrella Activities?<span class="topic-tag">SW Process</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q12','A','C')" data-qid="q12" data-opt="A"><span class="opt-label">A.</span> Requirements definition</li>
+        <li onclick="selectOption('q12','B','C')" data-qid="q12" data-opt="B"><span class="opt-label">B.</span> System design</li>
+        <li onclick="selectOption('q12','C','C')" data-qid="q12" data-opt="C"><span class="opt-label">C.</span> Risk management</li>
+        <li onclick="selectOption('q12','D','C')" data-qid="q12" data-opt="D"><span class="opt-label">D.</span> Code generation</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans12')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans12">✔ Jawaban: C. Risk management — Umbrella Activities berlangsung di semua fase, termasuk: risk management, SQA, formal technical reviews, measurement, configuration management, dll.</div>
+    </div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">13</div> Fase mana pada Unified Process yang menghasilkan use-case model dan software architecture description?<span class="topic-tag">Unified Process</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q13','A','C')" data-qid="q13" data-opt="A"><span class="opt-label">A.</span> Inception</li>
+        <li onclick="selectOption('q13','B','C')" data-qid="q13" data-opt="B"><span class="opt-label">B.</span> Construction</li>
+        <li onclick="selectOption('q13','C','C')" data-qid="q13" data-opt="C"><span class="opt-label">C.</span> Elaboration</li>
+        <li onclick="selectOption('q13','D','C')" data-qid="q13" data-opt="D"><span class="opt-label">D.</span> Transition</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans13')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans13">✔ Jawaban: C. Elaboration — Fase ini menghasilkan use-case model, functional/non-functional requirements, architecture description, executable architectural prototype, dll.</div>
+    </div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">14</div> Dalam Agile Manifesto, "Customer collaboration" lebih diutamakan daripada...<span class="topic-tag">Agile</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q14','A','C')" data-qid="q14" data-opt="A"><span class="opt-label">A.</span> Working software</li>
+        <li onclick="selectOption('q14','B','C')" data-qid="q14" data-opt="B"><span class="opt-label">B.</span> Individuals and interactions</li>
+        <li onclick="selectOption('q14','C','C')" data-qid="q14" data-opt="C"><span class="opt-label">C.</span> Contract negotiation</li>
+        <li onclick="selectOption('q14','D','C')" data-qid="q14" data-opt="D"><span class="opt-label">D.</span> Responding to change</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans14')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans14">✔ Jawaban: C. Contract negotiation — 4 nilai Agile: (Individuals & interactions) atas processes & tools; (Working software) atas comprehensive documentation; (Customer collaboration) atas contract negotiation; (Responding to change) atas following a plan.</div>
+    </div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">15</div> CBSE (Component-Based Software Engineering) berdasarkan pada konsep...<span class="topic-tag">CBSE</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q15','A','B')" data-qid="q15" data-opt="A"><span class="opt-label">A.</span> Pengembangan dari nol untuk setiap proyek</li>
+        <li onclick="selectOption('q15','B','B')" data-qid="q15" data-opt="B"><span class="opt-label">B.</span> Systematic reuse dari komponen yang sudah ada atau COTS</li>
+        <li onclick="selectOption('q15','C','B')" data-qid="q15" data-opt="C"><span class="opt-label">C.</span> Pengembangan dengan tim kecil dan informal</li>
+        <li onclick="selectOption('q15','D','B')" data-qid="q15" data-opt="D"><span class="opt-label">D.</span> Analisis risiko berulang setiap iterasi</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans15')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans15">✔ Jawaban: B — CBSE didasarkan pada systematic reuse di mana sistem diintegrasikan dari komponen yang sudah ada atau COTS (Commercial-off-the-shelf) systems.</div>
+    </div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">16</div> Kelemahan utama Waterfall Model adalah...<span class="topic-tag">SDLC</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q16','A','D')" data-qid="q16" data-opt="A"><span class="opt-label">A.</span> Tidak ada fase testing</li>
+        <li onclick="selectOption('q16','B','D')" data-qid="q16" data-opt="B"><span class="opt-label">B.</span> Terlalu banyak iterasi yang tidak perlu</li>
+        <li onclick="selectOption('q16','C','D')" data-qid="q16" data-opt="C"><span class="opt-label">C.</span> Tidak cocok untuk proyek besar</li>
+        <li onclick="selectOption('q16','D','D')" data-qid="q16" data-opt="D"><span class="opt-label">D.</span> Tidak fleksibel menghadapi perubahan requirements</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans16')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans16">✔ Jawaban: D — Inflexible partitioning membuat Waterfall sulit merespons perubahan requirements. Model ini cocok justru saat requirements sudah sangat stabil.</div>
+    </div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">17</div> Pada SRS IEEE 830, apa yang dimaksud dengan "TBD" dan bagaimana seharusnya ditangani?<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q17','A','B')" data-qid="q17" data-opt="A"><span class="opt-label">A.</span> TBD (To Be Done) adalah tanda bahwa requirement sudah selesai dikerjakan</li>
+        <li onclick="selectOption('q17','B','B')" data-qid="q17" data-opt="B"><span class="opt-label">B.</span> TBD (To Be Determined) menyebabkan SRS tidak Complete; harus disertai penjelasan kondisi dan penanggung jawab penyelesaiannya</li>
+        <li onclick="selectOption('q17','C','B')" data-qid="q17" data-opt="C"><span class="opt-label">C.</span> TBD boleh digunakan bebas untuk requirement yang belum penting</li>
+        <li onclick="selectOption('q17','D','B')" data-qid="q17" data-opt="D"><span class="opt-label">D.</span> TBD adalah standar penulisan requirement yang disarankan IEEE</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans17')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans17">✔ Jawaban: B — Penggunaan "TBD" membuat SRS tidak Complete. Jika terpaksa digunakan, harus disertai: kondisi penyebab TBD, apa yang harus dilakukan, siapa yang bertanggung jawab, dan kapan batas waktunya.</div>
+    </div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">18</div> CMMI Level 3 "Defined" berarti...<span class="topic-tag">CMMI</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q18','A','C')" data-qid="q18" data-opt="A"><span class="opt-label">A.</span> Proses sedang dilaksanakan untuk menghasilkan work products</li>
+        <li onclick="selectOption('q18','B','C')" data-qid="q18" data-opt="B"><span class="opt-label">B.</span> Proses dipahami dan dikontrol secara kuantitatif menggunakan pengukuran detail</li>
+        <li onclick="selectOption('q18','C','C')" data-qid="q18" data-opt="C"><span class="opt-label">C.</span> Proses manajemen dan rekayasa terdokumentasi, terstandarisasi, dan terintegrasi ke seluruh organisasi</li>
+        <li onclick="selectOption('q18','D','C')" data-qid="q18" data-opt="D"><span class="opt-label">D.</span> Perbaikan proses dilakukan secara berkelanjutan</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans18')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans18">✔ Jawaban: C — Level 3 Defined: proses terdokumentasi, distandarisasi, dan terintegrasi ke seluruh organisasi.</div>
+    </div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">19</div> Pada Concurrent Development Model, dalam state apa sebuah aktivitas berada saat perubahan telah disetujui dan diintegrasikan?<span class="topic-tag">SDLC</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q19','A','B')" data-qid="q19" data-opt="A"><span class="opt-label">A.</span> Under development</li>
+        <li onclick="selectOption('q19','B','B')" data-qid="q19" data-opt="B"><span class="opt-label">B.</span> Baselined</li>
+        <li onclick="selectOption('q19','C','B')" data-qid="q19" data-opt="C"><span class="opt-label">C.</span> Under revision</li>
+        <li onclick="selectOption('q19','D','B')" data-qid="q19" data-opt="D"><span class="opt-label">D.</span> Awaiting changes</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans19')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans19">✔ Jawaban: B. Baselined — Setelah perubahan diintegrasikan dan disetujui, aktivitas masuk ke state "Baselined" sebelum akhirnya "Done".</div>
+    </div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">20</div> Manakah yang BUKAN merupakan manfaat dokumen SRS yang baik menurut IEEE 830?<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q20','A','D')" data-qid="q20" data-opt="A"><span class="opt-label">A.</span> Dasar estimasi biaya dan jadwal</li>
+        <li onclick="selectOption('q20','B','D')" data-qid="q20" data-opt="B"><span class="opt-label">B.</span> Dasar untuk validasi dan verifikasi</li>
+        <li onclick="selectOption('q20','C','D')" data-qid="q20" data-opt="C"><span class="opt-label">C.</span> Memudahkan transfer software ke pengguna baru</li>
+        <li onclick="selectOption('q20','D','D')" data-qid="q20" data-opt="D"><span class="opt-label">D.</span> Menjamin tidak akan ada bug pada software yang dikembangkan</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans20')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans20">✔ Jawaban: D — SRS tidak menjamin software bebas bug. SRS hanyalah spesifikasi requirements, bukan jaminan kualitas implementasi.</div>
+    </div>
+  </div>
+
+  <!-- Q21 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">21</div> Apa yang dimaksud dengan "Ranked for importance and/or stability" dalam konteks SRS?<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q21','A','B')" data-qid="q21" data-opt="A"><span class="opt-label">A.</span> Setiap requirement harus diurutkan berdasarkan abjad</li>
+        <li onclick="selectOption('q21','B','B')" data-qid="q21" data-opt="B"><span class="opt-label">B.</span> Setiap requirement memiliki label prioritas (Essential, Conditional, Optional) agar developer tahu mana yang dikerjakan lebih dulu</li>
+        <li onclick="selectOption('q21','C','B')" data-qid="q21" data-opt="C"><span class="opt-label">C.</span> SRS harus diberi peringkat oleh lembaga independen</li>
+        <li onclick="selectOption('q21','D','B')" data-qid="q21" data-opt="D"><span class="opt-label">D.</span> Requirement yang paling mudah diimplementasikan diberi prioritas tertinggi</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans21')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans21">✔ Jawaban: B — Requirements harus diberi identifier prioritas: Essential (tidak dapat diterima tanpa ini), Conditional (meningkatkan kualitas tapi tidak kritis), Optional (boleh ada atau tidak).</div>
+    </div>
+  </div>
+
+  <!-- Q22 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">22</div> Concurrent Development Model paling sering digunakan untuk pengembangan...<span class="topic-tag">SDLC</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q22','A','B')" data-qid="q22" data-opt="A"><span class="opt-label">A.</span> Sistem embedded real-time</li>
+        <li onclick="selectOption('q22','B','B')" data-qid="q22" data-opt="B"><span class="opt-label">B.</span> Aplikasi client/server</li>
+        <li onclick="selectOption('q22','C','B')" data-qid="q22" data-opt="C"><span class="opt-label">C.</span> Aplikasi mobile</li>
+        <li onclick="selectOption('q22','D','B')" data-qid="q22" data-opt="D"><span class="opt-label">D.</span> Sistem database terpusat</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans22')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans22">✔ Jawaban: B. Aplikasi client/server — Concurrent Development Model mirip dengan Spiral model dan sering digunakan dalam pengembangan aplikasi client/server.</div>
+    </div>
+  </div>
+
+  <!-- Q23 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">23</div> Manakah yang BUKAN fase dari Unified Process?<span class="topic-tag">Unified Process</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q23','A','C')" data-qid="q23" data-opt="A"><span class="opt-label">A.</span> Inception</li>
+        <li onclick="selectOption('q23','B','C')" data-qid="q23" data-opt="B"><span class="opt-label">B.</span> Elaboration</li>
+        <li onclick="selectOption('q23','C','C')" data-qid="q23" data-opt="C"><span class="opt-label">C.</span> Implementation</li>
+        <li onclick="selectOption('q23','D','C')" data-qid="q23" data-opt="D"><span class="opt-label">D.</span> Transition</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans23')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans23">✔ Jawaban: C. Implementation — Fase UP adalah: Inception, Elaboration, Construction, Transition, Production. "Implementation" tidak termasuk.</div>
+    </div>
+  </div>
+
+  <!-- Q24 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">24</div> Dalam SRS, Section 2 berbeda dari Section 3 karena Section 2...<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q24','A','B')" data-qid="q24" data-opt="A"><span class="opt-label">A.</span> Berisi semua requirements detail untuk developer</li>
+        <li onclick="selectOption('q24','B','B')" data-qid="q24" data-opt="B"><span class="opt-label">B.</span> Memberikan latar belakang umum tanpa menyebutkan requirements spesifik</li>
+        <li onclick="selectOption('q24','C','B')" data-qid="q24" data-opt="C"><span class="opt-label">C.</span> Berisi test cases untuk setiap requirement</li>
+        <li onclick="selectOption('q24','D','B')" data-qid="q24" data-opt="D"><span class="opt-label">D.</span> Hanya berisi tujuan dan ruang lingkup dokumen</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans24')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans24">✔ Jawaban: B — Section 2 memberikan background/konteks umum. Section 3 adalah bagian paling inti yang berisi semua requirements spesifik detail untuk designer dan tester.</div>
+    </div>
+  </div>
+
+  <!-- Q25 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">25</div> SPICE dalam konteks process assessment merujuk pada standar...<span class="topic-tag">Process Assessment</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q25','A','B')" data-qid="q25" data-opt="A"><span class="opt-label">A.</span> ISO 9001:2000</li>
+        <li onclick="selectOption('q25','B','B')" data-qid="q25" data-opt="B"><span class="opt-label">B.</span> ISO/IEC 15504</li>
+        <li onclick="selectOption('q25','C','B')" data-qid="q25" data-opt="C"><span class="opt-label">C.</span> IEEE 830-1998</li>
+        <li onclick="selectOption('q25','D','B')" data-qid="q25" data-opt="D"><span class="opt-label">D.</span> IEEE 1074-1997</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans25')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans25">✔ Jawaban: B. ISO/IEC 15504 — SPICE (Software Process Improvement and Capability dEtermination) adalah nama informal untuk ISO/IEC 15504.</div>
+    </div>
+  </div>
+
+  <!-- Q26 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">26</div> Requirement "Output program harus dihasilkan dalam 20 detik pada 60% waktu, dan dalam 30 detik 100% waktu" memenuhi kriteria...<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q26','A','C')" data-qid="q26" data-opt="A"><span class="opt-label">A.</span> Complete dan Correct</li>
+        <li onclick="selectOption('q26','B','C')" data-qid="q26" data-opt="B"><span class="opt-label">B.</span> Traceable dan Modifiable</li>
+        <li onclick="selectOption('q26','C','C')" data-qid="q26" data-opt="C"><span class="opt-label">C.</span> Verifiable dan Unambiguous</li>
+        <li onclick="selectOption('q26','D','C')" data-qid="q26" data-opt="D"><span class="opt-label">D.</span> Consistent dan Ranked</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans26')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans26">✔ Jawaban: C — Requirement ini menggunakan istilah konkret dan ukuran yang terukur (Verifiable) serta hanya memiliki satu interpretasi (Unambiguous). Ini adalah contoh requirement yang baik dari dokumen IEEE 830.</div>
+    </div>
+  </div>
+
+  <!-- Q27 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">27</div> Dalam konteks IEEE 830, perbedaan antara "customer" dan "user" adalah...<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q27','A','B')" data-qid="q27" data-opt="A"><span class="opt-label">A.</span> Customer adalah pengguna akhir, user adalah yang membayar</li>
+        <li onclick="selectOption('q27','B','B')" data-qid="q27" data-opt="B"><span class="opt-label">B.</span> Customer adalah yang membayar/menentukan requirements; user adalah yang mengoperasikan software secara langsung</li>
+        <li onclick="selectOption('q27','C','B')" data-qid="q27" data-opt="C"><span class="opt-label">C.</span> Customer dan user adalah istilah yang sama dalam IEEE 830</li>
+        <li onclick="selectOption('q27','D','B')" data-qid="q27" data-opt="D"><span class="opt-label">D.</span> Customer adalah developer, user adalah customer</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans27')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans27">✔ Jawaban: B — Customer = pihak yang membayar dan menentukan requirements (tidak harus yang menggunakan langsung). User = yang mengoperasikan/berinteraksi langsung dengan software. Keduanya sering tidak sama.</div>
+    </div>
+  </div>
+
+  <!-- Q28 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">28</div> Requirement non-fungsional yang mengatur kemudahan software untuk dimodifikasi di masa depan disebut...<span class="topic-tag">Requirements</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q28','A','B')" data-qid="q28" data-opt="A"><span class="opt-label">A.</span> Reliability</li>
+        <li onclick="selectOption('q28','B','B')" data-qid="q28" data-opt="B"><span class="opt-label">B.</span> Maintainability</li>
+        <li onclick="selectOption('q28','C','B')" data-qid="q28" data-opt="C"><span class="opt-label">C.</span> Portability</li>
+        <li onclick="selectOption('q28','D','B')" data-qid="q28" data-opt="D"><span class="opt-label">D.</span> Availability</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans28')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans28">✔ Jawaban: B. Maintainability — Atribut yang berhubungan dengan kemudahan pemeliharaan/modifikasi software. Portability = kemudahan berpindah platform; Reliability = keandalan; Availability = ketersediaan layanan.</div>
+    </div>
+  </div>
+
+  <!-- Q29 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">29</div> Menurut IEEE 830, SRS yang baik sebaiknya TIDAK memuat...<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q29','A','C')" data-qid="q29" data-opt="A"><span class="opt-label">A.</span> External interface requirements</li>
+        <li onclick="selectOption('q29','B','C')" data-qid="q29" data-opt="B"><span class="opt-label">B.</span> Performance requirements</li>
+        <li onclick="selectOption('q29','C','C')" data-qid="q29" data-opt="C"><span class="opt-label">C.</span> Detail desain dan implementasi internal (partisi modul, aliran kontrol antar modul)</li>
+        <li onclick="selectOption('q29','D','C')" data-qid="q29" data-opt="D"><span class="opt-label">D.</span> Design constraints yang dipaksakan oleh standar eksternal</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans29')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans29">✔ Jawaban: C — SRS harus mendeskripsikan APA yang dilakukan sistem (eksternal), bukan BAGAIMANA caranya (desain internal). Menentukan partisi modul, aliran kontrol, dan struktur data adalah tugas desain, bukan SRS.</div>
+    </div>
+  </div>
+
+  <!-- Q30 -->
+  <div class="question-block">
+    <div class="q-header"><div class="q-num">30</div> Mengapa "redundancy" dalam SRS dianggap bermasalah meskipun tidak selalu salah?<span class="topic-tag">SRS</span></div>
+    <div class="q-body">
+      <ul class="options">
+        <li onclick="selectOption('q30','A','C')" data-qid="q30" data-opt="A"><span class="opt-label">A.</span> Redundancy membuat SRS terlalu panjang dan susah dibaca</li>
+        <li onclick="selectOption('q30','B','C')" data-qid="q30" data-opt="B"><span class="opt-label">B.</span> Redundancy melanggar kriteria Completeness</li>
+        <li onclick="selectOption('q30','C','C')" data-qid="q30" data-opt="C"><span class="opt-label">C.</span> Saat requirement yang redundan diperbarui hanya di satu tempat, SRS menjadi inconsistent</li>
+        <li onclick="selectOption('q30','D','C')" data-qid="q30" data-opt="D"><span class="opt-label">D.</span> Redundancy melanggar kriteria Traceability</li>
+      </ul>
+      <button class="show-answer-btn" onclick="toggleAnswer('ans30')">Lihat Jawaban</button>
+      <div class="answer-reveal" id="ans30">✔ Jawaban: C — Redundancy sendiri bukan kesalahan, tetapi jika requirement redundan hanya diperbarui di satu tempat (lupa tempat lain), SRS menjadi inconsistent. Solusi: gunakan explicit cross-references.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ======== ESSAY ======== -->
+<div id="essay" class="tab-pane">
+
+  <div style="background:white; border:1px solid var(--cream-dark); border-radius:4px; padding:16px 20px; margin-bottom:28px; font-size:13.5px; color:var(--muted)">
+    💡 Klik <strong>"Lihat Kisi-kisi"</strong> pada setiap soal untuk mendapatkan poin-poin kunci yang harus dijawab.
+  </div>
+
+  <!-- E1 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">1</div> Jelaskan perbedaan antara Software Engineering, Computer Science, dan System Engineering dari segi fokus dan ruang lingkupnya!<span class="topic-tag">Konsep Dasar</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h1')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h1"><strong>Kisi-kisi:</strong> CS = teori & algoritma (how to compute), SE = proses pengembangan software berkualitas secara sistematis (how to build), System Engineering = mencakup seluruh sistem (hardware + software + manusia). SE adalah subset dari System Engineering.</div>
+    </div>
+  </div>
+
+  <!-- E2 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">2</div> Sebutkan dan jelaskan 5 aktivitas dalam Common Process Framework beserta fungsi masing-masing!<span class="topic-tag">SW Process</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h2')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h2"><strong>Kisi-kisi:</strong> Communication (kolaborasi + requirements gathering), Planning (rencana kerja, risiko, jadwal, sumber daya), Modeling (membuat model analisis & desain), Construction (code + test), Deployment (penyerahan ke customer + evaluasi).</div>
+    </div>
+  </div>
+
+  <!-- E3 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">3</div> Jelaskan 6 level CMMI dari Level 0 hingga Level 5 beserta karakteristik utama setiap level!<span class="topic-tag">CMMI</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h3')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h3"><strong>Kisi-kisi:</strong> L0=Incomplete, L1=Performed (tugas dijalankan), L2=Managed (sumber daya cukup, stakeholder terlibat), L3=Defined (terdokumentasi & terstandarisasi di seluruh organisasi), L4=Quantitatively Managed (dikontrol secara kuantitatif), L5=Optimizing (perbaikan berkelanjutan).</div>
+    </div>
+  </div>
+
+  <!-- E4 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">4</div> Apa yang dimaksud dengan "Umbrella Activities" dalam Software Engineering? Sebutkan minimal 5 contoh beserta penjelasannya!<span class="topic-tag">SW Process</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h4')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h4"><strong>Kisi-kisi:</strong> Aktivitas yang berlangsung sepanjang semua fase pengembangan (tidak terbatas pada satu fase). Contoh: Software project tracking & control, Risk management, SQA, Formal technical reviews, Measurement, Software configuration management, Reusability management, Work product preparation.</div>
+    </div>
+  </div>
+
+  <!-- E5 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">5</div> Jelaskan Waterfall Model: alur tahapannya, kapan sebaiknya digunakan, dan apa kelemahannya!<span class="topic-tag">SDLC</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h5')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h5"><strong>Kisi-kisi:</strong> Alur: Requirements Definition → System & SW Design → Implementation & Unit Testing → Integration & System Testing → Operation & Maintenance. Kapan: requirements stabil, proyek besar multi-lokasi. Kelemahan: tidak fleksibel terhadap perubahan, partisi kaku antar fase, masalah ditemukan terlambat.</div>
+    </div>
+  </div>
+
+  <!-- E6 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">6</div> Bandingkan Spiral Model dengan Waterfall Model! Dalam kondisi proyek seperti apa Spiral lebih cocok digunakan?<span class="topic-tag">SDLC</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h6')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h6"><strong>Kisi-kisi:</strong> Waterfall = linear, 1x jalan, cocok untuk req stabil. Spiral = iteratif, menggabungkan prototyping + linear sequential, menekankan risk analysis di setiap iterasi. Spiral cocok untuk proyek berisiko tinggi, requirements berevolusi, proyek besar yang memerlukan validasi bertahap.</div>
+    </div>
+  </div>
+
+  <!-- E7 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">7</div> Jelaskan mengapa RAD (Rapid Application Development) Model dapat menyelesaikan proyek dalam 60–90 hari dan apa keterbatasannya!<span class="topic-tag">SDLC</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h7')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h7"><strong>Kisi-kisi:</strong> RAD cepat karena: memanfaatkan reusable components secara intensif, menggunakan beberapa tim yang bekerja paralel. Alur: Business → Data → Process Modeling → App Generation → Testing. Keterbatasan: butuh banyak developer berpengalaman, tidak cocok untuk sistem yang tidak dapat dimodulasi/komponen tidak tersedia, tidak cocok untuk sistem performa tinggi.</div>
+    </div>
+  </div>
+
+  <!-- E8 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">8</div> Kapan Prototyping Model sebaiknya digunakan? Jelaskan risiko yang mungkin muncul dalam penerapannya!<span class="topic-tag">SDLC</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h8')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h8"><strong>Kisi-kisi:</strong> Digunakan ketika customer punya kebutuhan umum tapi tidak bisa menentukan detail req. Risiko: (1) Customer menganggap prototype sudah final dan tidak mau mulai ulang, (2) Developer tergoda memperluas prototype kasar menjadi produk produksi dengan kualitas rendah, (3) Dokumentasi kurang karena fokus ke mock-up.</div>
+    </div>
+  </div>
+
+  <!-- E9 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">9</div> Jelaskan konsep CBSE (Component-Based Software Engineering) dan sebutkan tahapan prosesnya!<span class="topic-tag">CBSE</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h9')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h9"><strong>Kisi-kisi:</strong> CBSE = pengembangan berdasarkan systematic reuse dari komponen yang ada (termasuk COTS). Tahapan: (1) Component Analysis – mencari komponen yang tersedia, (2) Requirements Modification – menyesuaikan req dengan komponen, (3) System Design with Reuse – desain dengan mempertimbangkan komponen, (4) Development and Integration – mengintegrasikan komponen.</div>
+    </div>
+  </div>
+
+  <!-- E10 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">10</div> Jelaskan 5 fase Unified Process beserta work products kunci yang dihasilkan pada setiap fase!<span class="topic-tag">Unified Process</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h10')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h10"><strong>Kisi-kisi:</strong> Inception (vision doc, use-case awal, risk assessment, business case) → Elaboration (use-case model, arsitektur, functional/non-functional req, executable prototype) → Construction (design model, SW components, test plan, test cases) → Transition (delivered increment, beta test reports, user feedback) → Production (monitoring & support).</div>
+    </div>
+  </div>
+
+  <!-- E11 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">11</div> Jelaskan perbedaan antara Functional Requirements dan Non-functional Requirements! Berikan minimal 3 contoh masing-masing!<span class="topic-tag">Requirements</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h11')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h11"><strong>Kisi-kisi:</strong> FR = apa yang sistem harus lakukan (fungsi, perilaku). Contoh: sistem dapat mencari produk, sistem dapat memproses pembayaran, sistem menampilkan laporan. NFR = kualitas/atribut sistem. Contoh: Performance (respons &lt;2 detik), Security (enkripsi data), Reliability (uptime 99,9%), Usability (dapat dipelajari dalam 1 jam), Portability (berjalan di Windows & Linux).</div>
+    </div>
+  </div>
+
+  <!-- E12 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">12</div> Jelaskan 4 nilai utama Agile Manifesto! Mengapa nilai-nilai tersebut tidak berarti mengabaikan sisi kanan (processes, documentation, dll)?<span class="topic-tag">Agile</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h12')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h12"><strong>Kisi-kisi:</strong> 4 nilai: Individuals & interactions ATAS processes & tools; Working software ATAS comprehensive documentation; Customer collaboration ATAS contract negotiation; Responding to change ATAS following a plan. Sisi kanan tetap penting, hanya sisi kiri lebih bernilai dalam filosofi Agile. Banyak isu pragmatis di dunia nyata membuat sisi kanan sama pentingnya.</div>
+    </div>
+  </div>
+
+  <!-- E13 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">13</div> Sebutkan dan jelaskan 8 karakteristik Good SRS menurut standar IEEE 830-1998!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h13')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h13"><strong>Kisi-kisi:</strong> (1) Correct – sesuai kebutuhan nyata, (2) Unambiguous – satu interpretasi, (3) Complete – mencakup semua aspek, tanpa TBD tak terjelaskan, (4) Consistent – tidak ada konflik antar req, (5) Ranked – ada prioritas Essential/Conditional/Optional, (6) Verifiable – ada cara mengukurnya, (7) Modifiable – struktur memudahkan perubahan, (8) Traceable – ada backward & forward traceability.</div>
+    </div>
+  </div>
+
+  <!-- E14 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">14</div> Jelaskan perbedaan antara Section 2 dan Section 3 pada dokumen SRS IEEE 830 beserta isi masing-masing subseksi!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h14')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h14"><strong>Kisi-kisi:</strong> Sec 2 = Overall Description (latar belakang umum, TIDAK memuat specific requirements): Product Perspective, Product Functions, User Characteristics, Constraints, Assumptions & Dependencies, Apportioning. Sec 3 = Specific Requirements (requirements detail untuk designer & tester): External Interfaces, Functions, Performance, Logical DB, Design Constraints, SW System Attributes (Reliability, Availability, Security, Maintainability, Portability).</div>
+    </div>
+  </div>
+
+  <!-- E15 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">15</div> Apa yang dimaksud "Unambiguous" dalam SRS? Berikan 2 contoh requirement yang ambigu dan perbaikannya!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h15')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h15"><strong>Kisi-kisi:</strong> Unambiguous = setiap req hanya punya 1 interpretasi, setiap karakteristik menggunakan satu istilah unik. Contoh ambigu: "Sistem harus cepat" → perbaikan: "Sistem harus merespons dalam &lt;2 detik pada 95% request". Contoh ambigu 2: "Interface yang user-friendly" → perbaikan: "Operator baru harus dapat menyelesaikan task X dalam 10 menit setelah 1 jam pelatihan".</div>
+    </div>
+  </div>
+
+  <!-- E16 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">16</div> Jelaskan kriteria "Verifiable" pada SRS. Berikan contoh requirement yang tidak verifiable dan versi perbaikannya!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h16')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h16"><strong>Kisi-kisi:</strong> Verifiable = ada proses yang hemat biaya untuk membuktikan software memenuhi req. Tidak verifiable: "Sistem harus bekerja dengan baik" (apa itu 'baik'?), "Program tidak boleh masuk infinite loop" (tidak mungkin diuji secara teoritis). Verifiable: "95% transaksi harus selesai dalam &lt;1 detik", "Sistem harus mendukung minimal 500 concurrent users".</div>
+    </div>
+  </div>
+
+  <!-- E17 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">17</div> Jelaskan konsep "Traceable" dalam SRS dan perbedaan antara backward traceability dan forward traceability!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h17')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h17"><strong>Kisi-kisi:</strong> Traceable = asal-usul setiap req jelas dan req dapat dilacak ke dokumen turunannya. Backward traceability = setiap req merujuk eksplisit ke sumber di dokumen sebelumnya (misal: system req spec). Forward traceability = setiap req di SRS memiliki ID unik sehingga dapat dilacak ke desain, kode, dan test. Forward traceability penting terutama saat fase maintenance.</div>
+    </div>
+  </div>
+
+  <!-- E18 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">18</div> Sebutkan 3 jenis konflik yang dapat menyebabkan SRS menjadi tidak "Consistent" dan berikan contoh masing-masing!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h18')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h18"><strong>Kisi-kisi:</strong> (1) Konflik karakteristik objek nyata: Req A meminta background merah, Req B meminta background biru pada layar yang sama. (2) Konflik logis/temporal: Req A mengatakan "A harus mengikuti B", Req B mengatakan "A dan B terjadi bersamaan". (3) Konflik terminologi: objek yang sama disebut "prompt" di satu bagian dan "cue" di bagian lain.</div>
+    </div>
+  </div>
+
+  <!-- E19 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">19</div> Mengapa SRS sebaiknya tidak memuat detail desain? Berikan contoh yang membedakan requirements dari desain!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h19')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h19"><strong>Kisi-kisi:</strong> SRS harus membatasi ruang desain tanpa menentukan desain tertentu. SRS mendeskripsikan APA (what), bukan BAGAIMANA (how). Yang TIDAK boleh ada di SRS: partisi software menjadi modul, alokasi fungsi ke modul, deskripsi aliran kontrol antar modul, pemilihan struktur data. Yang BOLEH: design constraints yang dipaksakan standar eksternal, safety/security constraints yang memengaruhi desain.</div>
+    </div>
+  </div>
+
+  <!-- E20 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">20</div> Jelaskan 6 manfaat utama pembuatan dokumen SRS yang baik menurut IEEE 830-1998!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h20')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h20"><strong>Kisi-kisi:</strong> (1) Dasar kesepakatan customer & supplier, (2) Mengurangi effort pengembangan (temukan masalah lebih awal), (3) Dasar estimasi biaya & jadwal, (4) Baseline untuk validasi & verifikasi, (5) Memudahkan transfer software ke user/platform baru, (6) Dasar untuk enhancement/pengembangan lanjutan.</div>
+    </div>
+  </div>
+
+  <!-- E21 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">21</div> Sebuah SRS memuat requirement: "Sistem harus cukup aman". Analisis requirement ini menggunakan minimal 3 kriteria Good SRS dan tuliskan versi perbaikannya!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h21')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h21"><strong>Kisi-kisi:</strong> Melanggar: Unambiguous ("cukup aman" punya banyak interpretasi), Verifiable (tidak bisa diuji secara objektif), Complete (tidak menyebutkan aspek keamanan apa). Perbaikan contoh: "Sistem harus menggunakan enkripsi AES-256 untuk semua data yang disimpan", "Sistem harus mengharuskan password minimal 8 karakter dengan kombinasi huruf besar, kecil, angka, dan simbol", "Session pengguna harus berakhir otomatis setelah 15 menit tidak aktif".</div>
+    </div>
+  </div>
+
+  <!-- E22 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">22</div> Jelaskan peran prototyping dalam proses requirements engineering menurut standar IEEE 830!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h22')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h22"><strong>Kisi-kisi:</strong> IEEE 830 menyebutkan prototyping berguna karena: (1) Customer lebih mudah merespons prototype visual daripada membaca teks SRS (feedback cepat), (2) Prototype menampilkan aspek sistem yang tidak terduga (menghasilkan pertanyaan baru), (3) SRS yang berbasis prototype cenderung lebih stabil dan tidak banyak berubah. Prototype digunakan untuk elisitasi requirements, bukan untuk langsung dijadikan produk.</div>
+    </div>
+  </div>
+
+  <!-- E23 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">23</div> Jelaskan konsep "joint preparation of the SRS" menurut IEEE 830 dan mengapa customer dan supplier tidak bisa menulis SRS secara terpisah!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h23')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h23"><strong>Kisi-kisi:</strong> IEEE 830 merekomendasikan SRS dibuat bersama (jointly). Alasan: Customer biasanya tidak cukup memahami proses desain & pengembangan SW untuk menulis SRS yang dapat digunakan. Supplier biasanya tidak cukup memahami domain/bisnis customer untuk menentukan requirements yang memuaskan. Keduanya harus bekerja sama menghasilkan SRS yang dipahami oleh kedua belah pihak.</div>
+    </div>
+  </div>
+
+  <!-- E24 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">24</div> Apa yang dimaksud dengan "SRS evolution" dan bagaimana proses perubahan (change process) seharusnya dikelola menurut IEEE 830?<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h24')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h24"><strong>Kisi-kisi:</strong> SRS evolution = SRS mungkin perlu berkembang seiring kemajuan proyek (beberapa detail tidak bisa ditentukan di awal). Proses yang disarankan: (1) Tulis requirement selengkap mungkin saat ini, catat yang belum lengkap. (2) Inisiasi formal change process untuk melacak, mengontrol, dan melaporkan perubahan. (3) Perubahan yang disetujui harus dicatat dengan audit trail yang akurat dan lengkap.</div>
+    </div>
+  </div>
+
+  <!-- E25 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">25</div> Jelaskan perbedaan antara SPICE (ISO/IEC 15504) dan ISO 9001:2000 dalam konteks process assessment!<span class="topic-tag">Process Assessment</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h25')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h25"><strong>Kisi-kisi:</strong> SPICE (ISO 15504): mendefinisikan requirements untuk process assessment, memeriksa apakah proses efektif mencapai tujuannya, menyediakan reference model dengan process dimension & capability dimension, assessment terstruktur. ISO 9001:2000: mendefinisikan requirements quality management system, menekankan continuous improvement, menggunakan siklus "plan-do-check-act", assessment internal/eksternal menggunakan maturity scales.</div>
+    </div>
+  </div>
+
+  <!-- E26 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">26</div> Jelaskan keuntungan pengiriman software secara bertahap (incremental delivery) dalam Incremental Model dibandingkan Waterfall!<span class="topic-tag">SDLC</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h26')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h26"><strong>Kisi-kisi:</strong> Keuntungan incremental: (1) Customer mendapat software yang dapat digunakan lebih cepat, (2) Feedback lebih awal dari customer untuk increment berikutnya, (3) Risiko kegagalan total lebih rendah, (4) Requirements yang paling penting diimplementasikan lebih dulu (prioritas), (5) Perubahan di increment awal tidak merusak keseluruhan sistem. Berbeda dengan Waterfall yang baru menyerahkan software setelah semua selesai.</div>
+    </div>
+  </div>
+
+  <!-- E27 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">27</div> Jelaskan apa yang membedakan "Prescriptive Models" dari model SDLC lainnya, dan mengapa model preskriptif tidak memberikan jawaban definitif untuk semua masalah pengembangan software?<span class="topic-tag">SDLC</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h27')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h27"><strong>Kisi-kisi:</strong> Prescriptive models (Waterfall, Incremental, RAD) awalnya dibuat untuk membawa keteraturan di tengah kekacauan pengembangan software, memberikan panduan sistematis. Keterbatasan: computing environment terus berubah; tidak ada satu model yang cocok untuk semua jenis proyek; kebutuhan bisnis berubah cepat; model preskriptif cenderung kaku. Itulah mengapa model evolusioner (Spiral, Prototyping) dan Agile muncul.</div>
+    </div>
+  </div>
+
+  <!-- E28 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">28</div> Jelaskan struktur Section 1 (Introduction) dari dokumen SRS IEEE 830 beserta isi setiap subseksinya!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h28')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h28"><strong>Kisi-kisi:</strong> 1.1 Purpose: tujuan SRS & intended audience. 1.2 Scope: nama produk yang akan dibuat, apa yang akan dan tidak akan dilakukan, manfaat dan tujuan. 1.3 Definitions/Acronyms/Abbreviations: definisi semua istilah teknis yang digunakan. 1.4 References: daftar semua dokumen yang dirujuk. 1.5 Overview: deskripsi isi seluruh SRS dan cara organisasinya.</div>
+    </div>
+  </div>
+
+  <!-- E29 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">29</div> Jelaskan bagaimana kriteria "Modifiable" diterapkan dalam penulisan SRS. Apa yang harus dilakukan jika redundansi tidak bisa dihindari?<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h29')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h29"><strong>Kisi-kisi:</strong> Modifiable: struktur & gaya SRS memungkinkan perubahan mudah, lengkap, dan konsisten. Caranya: (1) Organisasi yang koheren dengan ToC, index, dan cross-reference eksplisit. (2) Hindari redundansi – req yang sama tidak boleh muncul lebih dari 1 kali. (3) Setiap req dinyatakan secara terpisah. Jika redundansi terpaksa ada: gunakan explicit cross-references agar saat satu diperbarui, yang lain juga diperbarui.</div>
+    </div>
+  </div>
+
+  <!-- E30 -->
+  <div class="essay-block">
+    <div class="essay-header"><div class="essay-num">30</div> Sebuah SRS memuat dua requirement: "R-01: Semua lampu indikator harus berwarna hijau" dan "R-47: Lampu indikator error harus berwarna merah". Analisis masalah pada SRS ini dan bagaimana cara mengatasinya!<span class="topic-tag">SRS</span></div>
+    <div class="essay-body">
+      <button class="hint-btn" onclick="toggleHint('h30')">Lihat Kisi-kisi</button>
+      <div class="essay-hint" id="h30"><strong>Kisi-kisi:</strong> Masalah: melanggar kriteria Consistent – ada konflik karakteristik objek nyata. R-01 mengatakan SEMUA lampu hijau, tapi R-47 mengatakan lampu error merah (bertentangan). Cara mengatasi: (1) Klarifikasi dengan customer mana yang benar, (2) Perbaiki salah satu: misal R-01 diubah menjadi "Semua lampu indikator normal harus berwarna hijau; lampu indikator error harus berwarna merah." (3) Lakukan formal review SRS untuk mendeteksi konflik serupa.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showTab(id, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+
+<div style="text-align:center; padding:24px; color:var(--muted); font-size:12px; border-top:1px solid var(--cream-dark); margin-top:20px">
+  Berdasarkan: IEEE Std 830-1998 · Pressman (7th ed.) · Sommerville (9th ed.) · Slide TI2034 Polban
+</div>
+
+</body>
+</html>
